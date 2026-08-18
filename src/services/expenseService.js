@@ -73,11 +73,29 @@ const updateExpense = async (expenseId, userId, expenseData) => {
     throw new Error("Expense not found.");
   }
 
+  const {
+    name,
+    amount,
+    description,
+    category,
+    date,
+    paymentMethod,
+    additionalNotes,
+  } = expenseData;
+
   const updatedExpense = await prisma.expense.update({
     where: {
       id: expenseId,
     },
-    data: expenseData,
+    data: {
+      name,
+      amount,
+      description,
+      category,
+      date,
+      paymentMethod,
+      additionalNotes,
+    },
   });
 
   return updatedExpense;
