@@ -27,6 +27,21 @@ const createExpense = async (expenseData, userId) => {
   return newExpense;
 };
 
+const getExpenses = async (userId) => {
+  const expenses = await prisma.expense.findMany({
+    where: {
+      userId,
+    },
+    orderBy: {
+      date: "desc",
+    },
+  });
+
+  return expenses;
+};
+
 module.exports = {
   createExpense,
+  getExpenses,
 };
+

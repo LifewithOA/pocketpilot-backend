@@ -1,4 +1,4 @@
-const { createExpense } = require("../services/expenseService");
+const { createExpense, getExpenses } = require("../services/expenseService");
 
 const create = async (req, res) => {
   try {
@@ -15,6 +15,21 @@ const create = async (req, res) => {
   }
 };
 
+const getAll = async (req, res) => {
+  try {
+    const expenses = await getExpenses(req.user.id);
+
+    res.status(200).json({
+      expenses,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   create,
+  getAll,
 };
