@@ -40,8 +40,30 @@ const getExpenses = async (userId) => {
   return expenses;
 };
 
+const deleteExpense = async (expenseId, userId) => {
+  const expense = await prisma.expense.findFirst({
+    where: {
+      id: expenseId,
+      userId,
+    },
+  });
+
+  if (!expense) {
+    throw new Error("Expense not found.");
+  }
+
+  await prisma.expense.delete({
+    where: {
+      id: expenseId,
+    },
+  });
+
+  return expense;
+};
+
 module.exports = {
   createExpense,
   getExpenses,
+  deleteExpense,
 };
 

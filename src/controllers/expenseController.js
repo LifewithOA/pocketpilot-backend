@@ -1,4 +1,8 @@
-const { createExpense, getExpenses } = require("../services/expenseService");
+const { createExpense, 
+        getExpenses,
+        deleteExpense,
+
+} = require("../services/expenseService");
 
 const create = async (req, res) => {
   try {
@@ -29,7 +33,26 @@ const getAll = async (req, res) => {
   }
 };
 
+const remove = async (req, res) => {
+  try {
+    const expense = await deleteExpense(
+      req.params.id,
+      req.user.id
+    );
+
+    res.status(200).json({
+      message: "Expense deleted successfully.",
+      expense,
+    });
+  } catch (error) {
+    res.status(404).json({
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   create,
   getAll,
+  remove,
 };
