@@ -1,6 +1,7 @@
 const { createExpense, 
         getExpenses,
         deleteExpense,
+        updateExpense,
 
 } = require("../services/expenseService");
 
@@ -51,8 +52,28 @@ const remove = async (req, res) => {
   }
 };
 
+const update = async (req, res) => {
+  try {
+    const expense = await updateExpense(
+      req.params.id,
+      req.user.id,
+      req.body
+    );
+
+    res.status(200).json({
+      message: "Expense updated successfully.",
+      expense,
+    });
+  } catch (error) {
+    res.status(404).json({
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   create,
   getAll,
   remove,
+  update,
 };
