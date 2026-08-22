@@ -5,18 +5,36 @@ const createExpense = async (expenseData, userId) => {
     name,
     amount,
     description,
-    category,
+    categoryId,
     date,
     paymentMethod,
     additionalNotes,
   } = expenseData;
+
+  const category = await prisma.category.findFirst({
+    where: {
+      id: categoryId,
+      OR: [
+        {
+          isDefault: true,
+        },
+        {
+          userId,
+        },
+      ],
+    },
+  });
+
+  if (!category) {
+    throw new Error("Invalid category.");
+  }
 
   const newExpense = await prisma.expense.create({
     data: {
       name,
       amount,
       description,
-      category,
+      categoryId,
       date,
       paymentMethod,
       additionalNotes,
@@ -26,11 +44,13 @@ const createExpense = async (expenseData, userId) => {
 
   return newExpense;
 };
-
 const getExpenses = async (userId) => {
   const expenses = await prisma.expense.findMany({
     where: {
       userId,
+    },
+    include: {
+      categoryRef: true,
     },
     orderBy: {
       date: "desc",
@@ -39,7 +59,6 @@ const getExpenses = async (userId) => {
 
   return expenses;
 };
-
 const deleteExpense = async (expenseId, userId) => {
   const expense = await prisma.expense.findFirst({
     where: {
@@ -77,11 +96,29 @@ const updateExpense = async (expenseId, userId, expenseData) => {
     name,
     amount,
     description,
-    category,
+    categoryId,
     date,
     paymentMethod,
     additionalNotes,
   } = expenseData;
+
+  const category = await prisma.category.findFirst({
+    where: {
+      id: categoryId,
+      OR: [
+        {
+          isDefault: true,
+        },
+        {
+          userId,
+        },
+      ],
+    },
+  });
+
+  if (!category) {
+    throw new Error("Invalid category.");
+  }
 
   const updatedExpense = await prisma.expense.update({
     where: {
@@ -91,7 +128,7 @@ const updateExpense = async (expenseId, userId, expenseData) => {
       name,
       amount,
       description,
-      category,
+      categoryId,
       date,
       paymentMethod,
       additionalNotes,
